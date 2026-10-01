@@ -1,0 +1,13 @@
+{
+  "name": "freeroam",
+  "private": true,
+  "description": "Game-style controls for Google Street View (Chrome extension). No build step; this file only holds dev scripts.",
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/smoke-test.mjs",
+    "package": "bash scripts/package.sh"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.0"
+  }
+}

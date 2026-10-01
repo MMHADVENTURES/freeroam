@@ -1,0 +1,566 @@
+/* FreeRoam — Injected Sidebar Styles
+   Direction A · "Open-World HUD": reads like the map screen of an open-world
+   game. Dark slate cards, a sliding heading tape, keys drawn as game button
+   prompts, one gold "objective marker" colour for where you're facing and a
+   mint status colour. Everything is namespaced under #sv-nav-sidebar (plus the
+   sv-nav-* elements outside it); the one exception is docking, at the bottom. */
+
+/* Fonts ship inside the extension (SIL OFL — see fonts/), nothing loads remotely.
+   Unique family names so they can't collide with Google's own fonts. */
+@font-face {
+    font-family: 'FreeRoam Chakra';
+    src: url('chrome-extension://__MSG_@@extension_id__/fonts/ChakraPetch-500.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'FreeRoam Chakra';
+    src: url('chrome-extension://__MSG_@@extension_id__/fonts/ChakraPetch-600.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'FreeRoam Chakra';
+    src: url('chrome-extension://__MSG_@@extension_id__/fonts/ChakraPetch-700.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'FreeRoam Mono';
+    src: url('chrome-extension://__MSG_@@extension_id__/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+    font-weight: 100 800;
+    font-display: swap;
+}
+
+:root {
+    --svn-bg: #13171d;          /* panel */
+    --svn-card: #1b2129;        /* cards, tape */
+    --svn-line: #28303a;        /* hairlines, borders */
+    --svn-key: #252c36;         /* keycaps, inactive segments */
+    --svn-key-edge: #0e1116;    /* keycap bottom edge */
+    --svn-text: #eaedf1;
+    --svn-dim: #8b95a2;
+    --svn-faint: #4a5561;
+    --svn-gold: #f2c14e;        /* objective marker: heading, you-are-here, pressed keys */
+    --svn-gold-edge: #9c7a26;
+    --svn-mint: #62d2a2;        /* status: in Street View, toggles on */
+
+    --svn-font: 'FreeRoam Chakra', 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+    --svn-mono: 'FreeRoam Mono', 'SF Mono', Menlo, Consolas, monospace;
+    --svn-w: 280px;
+}
+
+/* ── Panel ── */
+
+#sv-nav-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--svn-w);
+    height: 100vh;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--svn-bg);
+    border-right: 1px solid var(--svn-line);
+    color: var(--svn-text);
+    font: 500 13px/1.45 var(--svn-font);
+    font-variant-numeric: tabular-nums;
+    transition: transform 200ms ease;
+    box-sizing: border-box;
+}
+
+#sv-nav-sidebar.collapsed,
+#sv-nav-sidebar.auto-hidden {
+    transform: translateX(-100%);
+}
+
+#sv-nav-sidebar *,
+#sv-nav-sidebar *::before,
+#sv-nav-sidebar *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+#sv-nav-sidebar button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#sv-nav-sidebar :focus-visible {
+    outline: 2px solid var(--svn-gold);
+    outline-offset: 2px;
+}
+
+#sv-nav-sidebar::-webkit-scrollbar { width: 5px; }
+#sv-nav-sidebar::-webkit-scrollbar-thumb { background: var(--svn-line); border-radius: 3px; }
+
+/* ── Header ── */
+
+#sv-nav-sidebar .svn-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 2px 4px 4px;
+}
+
+#sv-nav-sidebar .svn-brand {
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: 0.14em;
+    margin-right: auto;
+}
+
+#sv-nav-sidebar .svn-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--svn-mint);
+    white-space: nowrap;
+}
+
+#sv-nav-sidebar .svn-chip::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+}
+
+#sv-nav-sidebar .svn-chip[data-state="warn"] { color: var(--svn-gold); }
+
+#sv-nav-sidebar .svn-collapse-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    color: var(--svn-dim);
+    font-size: 16px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+}
+
+#sv-nav-sidebar .svn-collapse-btn:hover { color: var(--svn-text); background: var(--svn-card); }
+
+/* ── Heading tape ── */
+
+#sv-nav-sidebar .svn-tape {
+    position: relative;
+    flex: none;
+    height: 54px;
+    background: var(--svn-card);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#sv-nav-sidebar .svn-tape::before,
+#sv-nav-sidebar .svn-tape::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+#sv-nav-sidebar .svn-tape::before { left: 0; background: linear-gradient(90deg, var(--svn-card), transparent); }
+#sv-nav-sidebar .svn-tape::after { right: 0; background: linear-gradient(-90deg, var(--svn-card), transparent); }
+
+#sv-nav-sidebar .svn-tape-marker {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    z-index: 3;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 7px solid var(--svn-gold);
+}
+
+#sv-nav-sidebar .svn-tape-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    display: flex;
+    will-change: transform;
+}
+
+#sv-nav-sidebar .svn-tick {
+    position: relative;
+    flex: none;
+    width: 12px;
+    height: 100%;
+}
+
+#sv-nav-sidebar .svn-tick::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    bottom: 8px;
+    width: 1.5px;
+    height: 7px;
+    background: var(--svn-faint);
+}
+
+#sv-nav-sidebar .svn-tick.maj::after { height: 13px; background: var(--svn-dim); }
+
+#sv-nav-sidebar .svn-tick span {
+    position: absolute;
+    top: 8px;
+    left: 6px;
+    transform: translateX(-50%);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--svn-text);
+}
+
+#sv-nav-sidebar .svn-tick span.n { color: var(--svn-gold); }
+
+#sv-nav-sidebar .svn-hdg {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 4px;
+    font-family: var(--svn-mono);
+}
+
+#sv-nav-sidebar .svn-hdg b { font-size: 26px; font-weight: 600; }
+#sv-nav-sidebar .svn-hdg small { font-size: 11.5px; color: var(--svn-dim); }
+
+/* ── Cards ── */
+
+#sv-nav-sidebar .svn-card {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    background: var(--svn-card);
+    border-radius: 8px;
+}
+
+#sv-nav-sidebar .svn-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--svn-dim);
+}
+
+#sv-nav-sidebar .svn-title-row { display: flex; justify-content: space-between; align-items: center; }
+
+#sv-nav-sidebar .svn-link-btn {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--svn-dim);
+}
+
+#sv-nav-sidebar .svn-link-btn:hover { color: var(--svn-text); }
+
+/* ── Location ── */
+
+#sv-nav-sidebar .svn-place {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+#sv-nav-sidebar .svn-coords {
+    font: 11.5px var(--svn-mono);
+    color: var(--svn-dim);
+}
+
+#sv-nav-sidebar .svn-search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 4px 0 10px;
+    background: var(--svn-bg);
+    border: 1px solid var(--svn-line);
+    border-radius: 6px;
+}
+
+#sv-nav-sidebar .svn-search:focus-within { border-color: var(--svn-dim); }
+
+#sv-nav-sidebar .svn-search input {
+    flex: 1;
+    min-width: 0;
+    height: 32px;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--svn-text);
+    font: 500 12.5px var(--svn-font);
+}
+
+#sv-nav-sidebar .svn-search input::placeholder { color: var(--svn-dim); }
+
+#sv-nav-sidebar .svn-enter {
+    font: 600 10px var(--svn-mono);
+    padding: 1px 5px;
+    border: 1px solid #3a4452;
+    border-radius: 3px;
+    color: var(--svn-text);
+}
+
+#sv-nav-sidebar .svn-enter:hover { border-color: var(--svn-gold); color: var(--svn-gold); }
+
+/* ── Controls ── */
+
+#sv-nav-sidebar .svn-ctrl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    align-items: center;
+}
+
+#sv-nav-sidebar .svn-key-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 32px);
+    gap: 5px;
+}
+
+#sv-nav-sidebar .svn-keycap {
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    background: var(--svn-key);
+    box-shadow: inset 0 -3px 0 var(--svn-key-edge);
+    font-size: 13px;
+    font-weight: 700;
+    transition: transform 60ms, background 60ms;
+}
+
+#sv-nav-sidebar .svn-keycap.active {
+    background: var(--svn-gold);
+    color: #1b1606;
+    transform: translateY(1px);
+    box-shadow: inset 0 -1px 0 var(--svn-gold-edge);
+}
+
+#sv-nav-sidebar .svn-key-legend {
+    display: grid;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--svn-dim);
+    white-space: nowrap;
+}
+
+#sv-nav-sidebar .svn-key-legend b {
+    display: inline-block;
+    min-width: 32px;
+    color: var(--svn-text);
+    font-weight: 600;
+}
+
+#sv-nav-sidebar .svn-ctrl-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2px 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--svn-line);
+    font-size: 11.5px;
+    color: var(--svn-dim);
+}
+
+#sv-nav-sidebar .svn-ctrl-foot b { color: var(--svn-text); font-weight: 600; }
+
+/* ── Recent ── */
+
+#sv-nav-sidebar .svn-recents { list-style: none; }
+
+#sv-nav-sidebar .svn-recents li + li { border-top: 1px solid var(--svn-line); }
+
+#sv-nav-sidebar .svn-recents-empty {
+    font-size: 12px;
+    color: var(--svn-dim);
+}
+
+#sv-nav-sidebar .svn-recent {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    padding: 7px 4px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    text-align: left;
+}
+
+#sv-nav-sidebar .svn-recent:hover { background: var(--svn-key); }
+
+#sv-nav-sidebar .svn-recent-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#sv-nav-sidebar .svn-recent-meta {
+    flex: none;
+    font: 11px var(--svn-mono);
+    color: var(--svn-dim);
+    white-space: nowrap;
+}
+
+#sv-nav-sidebar .svn-recent.current .svn-recent-meta {
+    font-family: var(--svn-font);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--svn-gold);
+}
+
+/* ── Settings ── */
+
+#sv-nav-sidebar .svn-set { font-size: 12.5px; }
+
+#sv-nav-sidebar .svn-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+#sv-nav-sidebar .svn-seg {
+    display: flex;
+    gap: 3px;
+    padding: 3px;
+    border-radius: 3px;
+}
+
+#sv-nav-sidebar .svn-seg button {
+    width: 8px;
+    height: 13px;
+    border-radius: 1px;
+    background: #2d3540;
+}
+
+#sv-nav-sidebar .svn-seg button.f { background: var(--svn-text); }
+#sv-nav-sidebar .svn-seg button:hover { background: var(--svn-gold); }
+
+#sv-nav-sidebar .svn-tog {
+    min-width: 34px;
+    padding: 2px 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-align: right;
+    color: var(--svn-dim);
+}
+
+#sv-nav-sidebar .svn-tog[aria-checked="true"] { color: var(--svn-mint); }
+#sv-nav-sidebar .svn-tog:hover { color: var(--svn-text); }
+
+/* ── Re-open tab (outside the panel) ── */
+
+#sv-nav-expand {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 9999;
+    width: 18px;
+    height: 56px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: #13171d;
+    border: 1px solid #28303a;
+    border-left: none;
+    border-radius: 0 6px 6px 0;
+    color: #f2c14e;
+    font: 600 16px 'FreeRoam Chakra', system-ui, sans-serif;
+    cursor: pointer;
+}
+
+#sv-nav-expand:hover { background: #1b2129; }
+
+#sv-nav-sidebar.collapsed ~ #sv-nav-expand { display: flex; }
+
+/* ── Mouse-look lock target (invisible; the pointer is locked onto this, not Google's canvas) ── */
+
+#sv-nav-looklayer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ── Mouse-look crosshair (inside <body>, so it centres on the map) ── */
+
+#sv-nav-crosshair {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2147483646;
+    display: none;
+}
+
+#sv-nav-crosshair.visible { display: block; }
+
+#sv-nav-crosshair .svn-ch-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    border-radius: 50%;
+    background: #eaedf1;
+    box-shadow: 0 0 0 1.5px rgba(19, 23, 29, 0.85);
+}
+
+#sv-nav-crosshair .svn-ch-hint {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: rgba(19, 23, 29, 0.85);
+    color: #eaedf1;
+    font: 600 11px 'FreeRoam Chakra', system-ui, sans-serif;
+    letter-spacing: 0.12em;
+}
+
+#sv-nav-crosshair .svn-ch-hint b { color: #f2c14e; font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+    #sv-nav-sidebar,
+    #sv-nav-sidebar .svn-keycap { transition: none; }
+}
+
+/* ── Docking ──
+   The one place we style Google's page: while the panel is open, <body> (all of
+   Google Maps) becomes a fixed box beside the panel, so the panel covers nothing.
+   Scoped to html.svn-docked, which content.js sets only while the panel is open.
+   position + transform make <body> the containing block for Maps' absolute and
+   fixed layers. */
+
+html.svn-docked > body {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 280px !important;
+    right: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    transform: translateZ(0);
+}

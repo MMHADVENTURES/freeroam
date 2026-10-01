@@ -2,6 +2,8 @@
 
 **Game-style controls for Google Street View.** WASD to move, mouse-look like a first-person game, zoom that doesn't tilt, and a docked HUD panel that never covers the map. No API key, no account, nothing leaves your computer.
 
+A free tool from **[MMH Adventures](https://mmhadventures.com)**, the studio behind Alt Time, PureWX and Streak for iPhone.
+
 https://github.com/user-attachments/assets/03a6f219-2436-4c95-baa8-1f65c2384f17
 
 ## Controls
@@ -73,6 +75,6 @@ FreeRoam stores your last location, recent places and settings **only on your co
 
 ## License & credits
 
-Made by **MMH Adventures LLC**. MIT — see [LICENSE](LICENSE). Bundled fonts: [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch) and [JetBrains Mono](https://www.jetbrains.com/lp/mono/), both under the SIL Open Font License (`fonts/`).
+Made by **[MMH Adventures LLC](https://mmhadventures.com)**. MIT — see [LICENSE](LICENSE). Bundled fonts: [Chakra Petch](https://fonts.google.com/specimen/Chakra+Petch) and [JetBrains Mono](https://www.jetbrains.com/lp/mono/), both under the SIL Open Font License (`fonts/`).
 
 FreeRoam is an independent project and is **not affiliated with, endorsed by, or sponsored by Google**. Google Maps and Street View are trademarks of Google LLC. Street View imagery in the screenshots © Google.

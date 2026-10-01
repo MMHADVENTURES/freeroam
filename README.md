@@ -4,8 +4,6 @@
 
 [![Watch how FreeRoam works (1½-minute video)](docs/how-it-works-poster.jpg)](docs/freeroam-how-it-works.mp4)
 
-![FreeRoam demo: turning, walking up Broadway in Nashville, zooming, and mouse-look](docs/demo.gif)
-
 ## Controls
 
 | Key | Does |

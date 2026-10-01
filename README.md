@@ -2,7 +2,7 @@
 
 **Game-style controls for Google Street View.** WASD to move, mouse-look like a first-person game, zoom that doesn't tilt, and a docked HUD panel that never covers the map. No API key, no account, nothing leaves your computer.
 
-[![Watch how FreeRoam works (1½-minute video)](docs/how-it-works-poster.jpg)](docs/freeroam-how-it-works.mp4)
+https://github.com/user-attachments/assets/03a6f219-2436-4c95-baa8-1f65c2384f17
 
 ## Controls
 
